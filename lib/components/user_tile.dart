@@ -1,6 +1,8 @@
 import 'package:firecrud/models/user.dart';
+import 'package:firecrud/provider/users.dart';
 import 'package:firecrud/routes/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UserTile extends StatelessWidget {
   final User user;
@@ -28,9 +30,9 @@ class UserTile extends StatelessWidget {
             ),
             onPressed: () {
               Navigator.of(context).pushNamed(
-               AppRoutes.USER_FORM,
-               arguments: user,
-             );
+                AppRoutes.USER_FORM,
+                arguments: user,
+              );
             },
           ),
           IconButton(
@@ -39,6 +41,31 @@ class UserTile extends StatelessWidget {
               color: Colors.red,
             ),
             onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Excluir usuário'),
+                  content: Text('Tem certeza?'),
+                  actions: [
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: Text('Não'),
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      child: Text('Sim'),
+                    ),
+                  ],
+                ),
+              ).then((value) {
+                if (value) {
+                  Provider.of<Users>(context, listen: false).remove(user);
+                }
+              });
             },
           ),
         ],
